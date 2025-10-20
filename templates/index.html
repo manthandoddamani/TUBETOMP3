@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube to MP3 Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 YouTube to MP3 Converter</h1>
+        <p class="subtitle">Convert YouTube videos to MP3 files easily</p>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="urlInput" 
+                    placeholder="Paste YouTube URL here..."
+                    autocomplete="off"
+                >
+                <button id="pasteBtn" class="paste-btn">📋 Paste</button>
+            </div>
+            <button id="generateBtn" class="generate-btn">🎯 Generate Info</button>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+
+        <div id="error" class="error" style="display: none;"></div>
+
+        <div id="videoInfo" class="video-info" style="display: none;">
+            <h2>Video Information</h2>
+            <div class="info-card">
+                <img id="thumbnail" src="" alt="Video Thumbnail">
+                <div class="info-details">
+                    <h3 id="title"></h3>
+                    <p><strong>Channel:</strong> <span id="channel"></span></p>
+                    <p><strong>Duration:</strong> <span id="duration"></span></p>
+                </div>
+            </div>
+            <button id="downloadBtn" class="download-btn">⬇️ Download MP3</button>
+        </div>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const pasteBtn = document.getElementById('pasteBtn');
+        const generateBtn = document.getElementById('generateBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const loading = document.getElementById('loading');
+        const error = document.getElementById('error');
+        const videoInfo = document.getElementById('videoInfo');
+        
+        let currentUrl = '';
+
+        pasteBtn.addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                urlInput.value = text;
+                error.style.display = 'none';
+            } catch (err) {
+                showError('Unable to paste. Please paste manually using Ctrl+V or Cmd+V');
+            }
+        });
+
+        generateBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showError('Please enter a YouTube URL');
+                return;
+            }
+
+            if (!url.includes('youtube.com') && !url.includes('youtu.be')) {
+                showError('Please enter a valid YouTube URL');
+                return;
+            }
+
+            currentUrl = url;
+            hideError();
+            videoInfo.style.display = 'none';
+            loading.style.display = 'block';
+
+            try {
+                const response = await fetch('/get_video_info', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+                loading.style.display = 'none';
+
+                if (!response.ok) {
+                    showError(data.error || 'Failed to fetch video information');
+                    return;
+                }
+
+                displayVideoInfo(data);
+            } catch (err) {
+                loading.style.display = 'none';
+                showError('An error occurred: ' + err.message);
+            }
+        });
+
+        downloadBtn.addEventListener('click', async () => {
+            if (!currentUrl) {
+                showError('Please generate video info first');
+                return;
+            }
+
+            hideError();
+            loading.style.display = 'block';
+            downloadBtn.disabled = true;
+
+            try {
+                const response = await fetch('/download_mp3', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url: currentUrl })
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Download failed');
+                }
+
+                const blob = await response.blob();
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'audio.mp3';
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+                    if (filenameMatch) {
+                        filename = filenameMatch[1];
+                    }
+                }
+                
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(downloadUrl);
+
+                loading.style.display = 'none';
+                downloadBtn.disabled = false;
+                
+                showSuccess('MP3 downloaded successfully!');
+            } catch (err) {
+                loading.style.display = 'none';
+                downloadBtn.disabled = false;
+                showError('Download failed: ' + err.message);
+            }
+        });
+
+        urlInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                generateBtn.click();
+            }
+        });
+
+        function displayVideoInfo(data) {
+            document.getElementById('thumbnail').src = data.thumbnail;
+            document.getElementById('title').textContent = data.title;
+            document.getElementById('channel').textContent = data.channel;
+            document.getElementById('duration').textContent = data.duration;
+            videoInfo.style.display = 'block';
+        }
+
+        function showError(message) {
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+
+        function hideError() {
+            error.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            document.querySelector('.container').insertBefore(successDiv, videoInfo);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

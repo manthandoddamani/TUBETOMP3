@@ -62,6 +62,14 @@ def download_mp3():
         if not url:
             return jsonify({'error': 'Please provide a YouTube URL'}), 400
         
+        # Get sanitized title first
+        with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
+            info = ydl.extract_info(url, download=False)
+            title = sanitize_filename(info.get('title', 'audio'))
+        
+        # Use sanitized title in the output template
+        output_path = os.path.join(DOWNLOAD_FOLDER, f'{title}.%(ext)s')
+        
         ydl_opts = {
             'format': 'bestaudio/best',
             'postprocessors': [{
@@ -69,26 +77,38 @@ def download_mp3():
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             }],
-            'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
+            'outtmpl': output_path,
             'quiet': True,
             'no_warnings': True,
         }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=True)
-            title = sanitize_filename(info.get('title', 'audio'))
-            filename = f"{title}.mp3"
-            filepath = os.path.join(DOWNLOAD_FOLDER, filename)
+            ydl.download([url])
             
-            if os.path.exists(filepath):
-                return send_file(
-                    filepath,
-                    as_attachment=True,
-                    download_name=filename,
-                    mimetype='audio/mpeg'
-                )
+        filename = f"{title}.mp3"
+        filepath = os.path.join(DOWNLOAD_FOLDER, filename)
+        
+        # Check if file exists, if not try to find any mp3 file
+        if not os.path.exists(filepath):
+            # Look for the most recently created mp3 file
+            mp3_files = [f for f in os.listdir(DOWNLOAD_FOLDER) if f.endswith('.mp3')]
+            if mp3_files:
+                # Get the most recent file
+                mp3_files.sort(key=lambda x: os.path.getmtime(os.path.join(DOWNLOAD_FOLDER, x)), reverse=True)
+                filepath = os.path.join(DOWNLOAD_FOLDER, mp3_files[0])
+                filename = mp3_files[0]
             else:
                 return jsonify({'error': 'File not found after conversion'}), 500
+        
+        if os.path.exists(filepath):
+            return send_file(
+                filepath,
+                as_attachment=True,
+                download_name=filename,
+                mimetype='audio/mpeg'
+            )
+        else:
+            return jsonify({'error': 'File not found after conversion'}), 500
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500

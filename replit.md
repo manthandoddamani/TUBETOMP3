@@ -1,7 +1,7 @@
-# YouTube to MP3 Converter
+# YouTube Downloader (MP3 & MP4)
 
 ## Overview
-A web application that converts YouTube videos to MP3 files. Users can paste a YouTube URL, preview video information (title, thumbnail, duration, channel), select audio quality, and download the audio as an MP3 file with the video's title as the filename.
+A web application that downloads YouTube videos as MP3 (audio) or MP4 (video) files. Users can paste a YouTube URL, preview video information (title, thumbnail, duration, channel), select output format and quality, and download the file with the video's title as the filename.
 
 ## Features
 - **URL Input**: Paste button for easy URL insertion and manual input field
@@ -10,16 +10,22 @@ A web application that converts YouTube videos to MP3 files. Users can paste a Y
   - Video title
   - Channel name
   - Duration
-- **Quality Selection**: Choose between two audio quality options:
-  - Normal (192 kbps) - Good quality, smaller file size
-  - HD (320 kbps) - High quality, larger file size
-- **MP3 Conversion**: Converts YouTube videos to MP3 format with selected quality
-- **Automatic Download**: Downloads MP3 file with the video's title as filename
+- **Format Selection**: Choose between MP3 (audio) or MP4 (video) output
+- **Quality Selection**: 
+  - **MP3 Quality Options:**
+    - Normal (192 kbps) - Good quality, smaller file size
+    - HD (320 kbps) - High quality, larger file size
+  - **MP4 Quality Options:**
+    - 360p (Low) - Smaller file size
+    - 480p (SD) - Standard definition
+    - 720p (HD) - High definition
+    - 1080p (Full HD) - Full high definition
+- **Automatic Download**: Downloads file with the video's title as filename
 - **Clean UI**: Modern, responsive design with gradient background
 
 ## Technology Stack
 - **Backend**: Python Flask
-- **Video Processing**: yt-dlp for downloading and FFmpeg for audio extraction
+- **Video Processing**: yt-dlp for downloading and FFmpeg for video/audio extraction
 - **Frontend**: HTML, CSS, JavaScript (Vanilla)
 
 ## Project Structure
@@ -29,7 +35,7 @@ A web application that converts YouTube videos to MP3 files. Users can paste a Y
 │   └── index.html        # Frontend interface
 ├── static/
 │   └── style.css         # Styling
-├── downloads/            # Temporary storage for MP3 files
+├── downloads/            # Temporary storage for downloaded files
 └── replit.md            # This file
 ```
 
@@ -37,12 +43,15 @@ A web application that converts YouTube videos to MP3 files. Users can paste a Y
 1. User pastes or enters a YouTube URL
 2. Clicks "Generate Info" to fetch video information
 3. Video details are displayed (thumbnail, title, channel, duration)
-4. User selects desired audio quality (Normal or HD)
-5. User clicks "Download MP3" to convert and download
-6. MP3 file is downloaded with the video's title as the filename
+4. User selects desired format (MP3 or MP4)
+5. User selects desired quality based on format
+6. User clicks "Download" button to convert and download
+7. File is downloaded with the video's title as the filename
 
 ## Recent Updates
-- October 20, 2025: Added quality selection feature (Normal 192kbps, HD 320kbps)
+- October 20, 2025: Added format selection (MP3/MP4) with quality options for both formats
+- October 20, 2025: Added quality selection feature for MP3 (Normal 192kbps, HD 320kbps)
+- October 20, 2025: Initial creation
 
 ## Date Created
 October 20, 2025

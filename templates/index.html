@@ -8,8 +8,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎵 YouTube to MP3 Converter</h1>
-        <p class="subtitle">Convert YouTube videos to MP3 files easily</p>
+        <h1>🎵 YouTube Downloader</h1>
+        <p class="subtitle">Download YouTube videos as MP3 or MP4</p>
         
         <div class="input-section">
             <div class="input-group">
@@ -41,8 +41,15 @@
                     <p><strong>Duration:</strong> <span id="duration"></span></p>
                 </div>
             </div>
+            <div class="format-selector">
+                <label for="formatSelect">📁 Format:</label>
+                <select id="formatSelect">
+                    <option value="mp3">MP3 (Audio)</option>
+                    <option value="mp4">MP4 (Video)</option>
+                </select>
+            </div>
             <div class="quality-selector">
-                <label for="qualitySelect">🎧 Audio Quality:</label>
+                <label for="qualitySelect" id="qualityLabel">🎧 Audio Quality:</label>
                 <select id="qualitySelect">
                     <option value="192">Normal (192 kbps)</option>
                     <option value="320">HD (320 kbps)</option>
@@ -57,11 +64,49 @@
         const pasteBtn = document.getElementById('pasteBtn');
         const generateBtn = document.getElementById('generateBtn');
         const downloadBtn = document.getElementById('downloadBtn');
+        const formatSelect = document.getElementById('formatSelect');
+        const qualitySelect = document.getElementById('qualitySelect');
+        const qualityLabel = document.getElementById('qualityLabel');
         const loading = document.getElementById('loading');
         const error = document.getElementById('error');
         const videoInfo = document.getElementById('videoInfo');
         
         let currentUrl = '';
+
+        // Handle format selection change
+        formatSelect.addEventListener('change', () => {
+            const format = formatSelect.value;
+            updateQualityOptions(format);
+            updateDownloadButton(format);
+        });
+
+        function updateQualityOptions(format) {
+            qualitySelect.innerHTML = '';
+            
+            if (format === 'mp3') {
+                qualityLabel.textContent = '🎧 Audio Quality:';
+                qualitySelect.innerHTML = `
+                    <option value="192">Normal (192 kbps)</option>
+                    <option value="320">HD (320 kbps)</option>
+                `;
+            } else if (format === 'mp4') {
+                qualityLabel.textContent = '🎬 Video Quality:';
+                qualitySelect.innerHTML = `
+                    <option value="360">360p (Low)</option>
+                    <option value="480">480p (SD)</option>
+                    <option value="720">720p (HD)</option>
+                    <option value="1080">1080p (Full HD)</option>
+                `;
+            }
+        }
+
+        function updateDownloadButton(format) {
+            if (format === 'mp3') {
+                downloadBtn.textContent = '⬇️ Download MP3';
+            } else if (format === 'mp4') {
+                downloadBtn.textContent = '⬇️ Download MP4';
+            }
+        }
 
         pasteBtn.addEventListener('click', async () => {
             try {
@@ -121,19 +166,20 @@
                 return;
             }
 
-            const quality = document.getElementById('qualitySelect').value;
+            const format = formatSelect.value;
+            const quality = qualitySelect.value;
             
             hideError();
             loading.style.display = 'block';
             downloadBtn.disabled = true;
 
             try {
-                const response = await fetch('/download_mp3', {
+                const response = await fetch('/download', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ url: currentUrl, quality: quality })
+                    body: JSON.stringify({ url: currentUrl, format: format, quality: quality })
                 });
 
                 if (!response.ok) {
@@ -164,7 +210,8 @@
                 loading.style.display = 'none';
                 downloadBtn.disabled = false;
                 
-                showSuccess('MP3 downloaded successfully!');
+                const formatText = format === 'mp3' ? 'MP3' : 'MP4';
+                showSuccess(`${formatText} downloaded successfully!`);
             } catch (err) {
                 loading.style.display = 'none';
                 downloadBtn.disabled = false;

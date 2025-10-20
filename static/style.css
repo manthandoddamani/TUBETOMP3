@@ -172,6 +172,38 @@ h1 {
     color: #333;
 }
 
+.quality-selector {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.quality-selector label {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+#qualitySelect {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+#qualitySelect:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
 .download-btn {
     width: 100%;
     padding: 15px;

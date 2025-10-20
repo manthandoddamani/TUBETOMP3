@@ -58,9 +58,14 @@ def download_mp3():
     try:
         data = request.get_json()
         url = data.get('url', '').strip()
+        quality = data.get('quality', '192')
         
         if not url:
             return jsonify({'error': 'Please provide a YouTube URL'}), 400
+        
+        # Validate quality parameter
+        if quality not in ['192', '320']:
+            quality = '192'
         
         # Get sanitized title first
         with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
@@ -75,7 +80,7 @@ def download_mp3():
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
-                'preferredquality': '192',
+                'preferredquality': quality,
             }],
             'outtmpl': output_path,
             'quiet': True,

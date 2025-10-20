@@ -172,8 +172,40 @@ h1 {
     color: #333;
 }
 
+.format-selector {
+    margin: 20px 0 10px 0;
+    padding: 15px;
+    background: #e8f4f8;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.format-selector label {
+    font-weight: 600;
+    color: #333;
+    font-size: 1rem;
+}
+
+#formatSelect {
+    flex: 1;
+    padding: 10px 15px;
+    border: 2px solid #d0e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+#formatSelect:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
 .quality-selector {
-    margin: 20px 0;
+    margin: 10px 0 20px 0;
     padding: 15px;
     background: #f8f9fa;
     border-radius: 10px;

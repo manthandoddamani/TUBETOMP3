@@ -1,7 +1,7 @@
 # YouTube to MP3 Converter
 
 ## Overview
-A web application that converts YouTube videos to MP3 files. Users can paste a YouTube URL, preview video information (title, thumbnail, duration, channel), and download the audio as an MP3 file with the video's title as the filename.
+A web application that converts YouTube videos to MP3 files. Users can paste a YouTube URL, preview video information (title, thumbnail, duration, channel), select audio quality, and download the audio as an MP3 file with the video's title as the filename.
 
 ## Features
 - **URL Input**: Paste button for easy URL insertion and manual input field
@@ -10,7 +10,10 @@ A web application that converts YouTube videos to MP3 files. Users can paste a Y
   - Video title
   - Channel name
   - Duration
-- **MP3 Conversion**: Converts YouTube videos to MP3 format (192kbps quality)
+- **Quality Selection**: Choose between two audio quality options:
+  - Normal (192 kbps) - Good quality, smaller file size
+  - HD (320 kbps) - High quality, larger file size
+- **MP3 Conversion**: Converts YouTube videos to MP3 format with selected quality
 - **Automatic Download**: Downloads MP3 file with the video's title as filename
 - **Clean UI**: Modern, responsive design with gradient background
 
@@ -34,8 +37,12 @@ A web application that converts YouTube videos to MP3 files. Users can paste a Y
 1. User pastes or enters a YouTube URL
 2. Clicks "Generate Info" to fetch video information
 3. Video details are displayed (thumbnail, title, channel, duration)
-4. User clicks "Download MP3" to convert and download
-5. MP3 file is downloaded with the video's title as the filename
+4. User selects desired audio quality (Normal or HD)
+5. User clicks "Download MP3" to convert and download
+6. MP3 file is downloaded with the video's title as the filename
+
+## Recent Updates
+- October 20, 2025: Added quality selection feature (Normal 192kbps, HD 320kbps)
 
 ## Date Created
 October 20, 2025

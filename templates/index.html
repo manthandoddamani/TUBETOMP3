@@ -41,6 +41,13 @@
                     <p><strong>Duration:</strong> <span id="duration"></span></p>
                 </div>
             </div>
+            <div class="quality-selector">
+                <label for="qualitySelect">🎧 Audio Quality:</label>
+                <select id="qualitySelect">
+                    <option value="192">Normal (192 kbps)</option>
+                    <option value="320">HD (320 kbps)</option>
+                </select>
+            </div>
             <button id="downloadBtn" class="download-btn">⬇️ Download MP3</button>
         </div>
     </div>
@@ -114,6 +121,8 @@
                 return;
             }
 
+            const quality = document.getElementById('qualitySelect').value;
+            
             hideError();
             loading.style.display = 'block';
             downloadBtn.disabled = true;
@@ -124,7 +133,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ url: currentUrl })
+                    body: JSON.stringify({ url: currentUrl, quality: quality })
                 });
 
                 if (!response.ok) {

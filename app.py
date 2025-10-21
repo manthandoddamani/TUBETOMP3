@@ -32,6 +32,7 @@ def get_video_info():
             'quiet': True,
             'no_warnings': True,
             'cookiefile': '/etc/secrets/cookies.txt',
+            'nooverwrites': True,   # ✅ prevent write attempts
             'http_headers': {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
             },
@@ -73,11 +74,9 @@ def download():
             info = ydl.extract_info(url, download=False)
             title = sanitize_filename(info.get('title', 'video'))
         
-        # Use sanitized title in the output template
         output_path = os.path.join(DOWNLOAD_FOLDER, f'{title}.%(ext)s')
         
         if format_type == 'mp3':
-            # Validate MP3 quality parameter
             if quality not in ['192', '320']:
                 quality = '192'
             
@@ -91,6 +90,7 @@ def download():
                 'outtmpl': output_path,
                 'quiet': True,
                 'no_warnings': True,
+                'nooverwrites': True,   # ✅ prevent write attempts
                 'cookiefile': '/etc/secrets/cookies.txt',
                 'http_headers': {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
@@ -101,11 +101,9 @@ def download():
             mimetype = 'audio/mpeg'
             
         elif format_type == 'mp4':
-            # Validate MP4 quality parameter
             if quality not in ['360', '480', '720', '1080']:
                 quality = '720'
             
-            # Format string for video quality
             if quality == '360':
                 format_str = 'bestvideo[height<=360]+bestaudio/best[height<=360]'
             elif quality == '480':
@@ -126,6 +124,7 @@ def download():
                 'outtmpl': output_path,
                 'quiet': True,
                 'no_warnings': True,
+                'nooverwrites': True,   # ✅ prevent write attempts
                 'cookiefile': '/etc/secrets/cookies.txt',
                 'http_headers': {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
@@ -144,7 +143,6 @@ def download():
         filename = f"{title}.{file_extension}"
         filepath = os.path.join(DOWNLOAD_FOLDER, filename)
         
-        # Check if file exists, if not try to find any file with the extension
         if not os.path.exists(filepath):
             files = [f for f in os.listdir(DOWNLOAD_FOLDER) if f.endswith(f'.{file_extension}')]
             if files:

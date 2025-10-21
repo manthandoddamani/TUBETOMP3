@@ -28,15 +28,14 @@ def get_video_info():
         if not url:
             return jsonify({'error': 'Please provide a YouTube URL'}), 400
         
-     ydl_opts = {
-    'quiet': True,
-    'no_warnings': True,
-    'cookiefile': 'cookies.txt',  # use the exact name of your secret file
-    'http_headers': {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    },
-}
-
+        ydl_opts = {
+            'quiet': True,
+            'no_warnings': True,
+            'cookiefile': 'cookies.txt',  # use the exact name of your secret file
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+            },
+        }
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -83,21 +82,20 @@ def download():
                 quality = '192'
             
             ydl_opts = {
-    'format': 'bestaudio/best',
-    'postprocessors': [{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'mp3',
-        'preferredquality': quality,
-    }],
-    'outtmpl': output_path,
-    'quiet': True,
-    'no_warnings': True,
-    'cookiefile': 'cookies.txt',
-    'http_headers': {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    },
-}
-
+                'format': 'bestaudio/best',
+                'postprocessors': [{
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': quality,
+                }],
+                'outtmpl': output_path,
+                'quiet': True,
+                'no_warnings': True,
+                'cookiefile': 'cookies.txt',
+                'http_headers': {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                },
+            }
             
             file_extension = 'mp3'
             mimetype = 'audio/mpeg'
@@ -119,21 +117,21 @@ def download():
             else:
                 format_str = 'bestvideo+bestaudio/best'
             
-      ydl_opts = {
-    'format': format_str,
-    'postprocessors': [{
-        'key': 'FFmpegVideoConvertor',
-        'preferedformat': 'mp4',
-    }],
-    'outtmpl': output_path,
-    'quiet': True,
-    'no_warnings': True,
-    'cookiefile': 'cookies.txt',
-    'http_headers': {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-    },
-    'merge_output_format': 'mp4',
-}
+            ydl_opts = {
+                'format': format_str,
+                'postprocessors': [{
+                    'key': 'FFmpegVideoConvertor',
+                    'preferedformat': 'mp4',
+                }],
+                'outtmpl': output_path,
+                'quiet': True,
+                'no_warnings': True,
+                'cookiefile': 'cookies.txt',
+                'http_headers': {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                },
+                'merge_output_format': 'mp4',
+            }
 
             file_extension = 'mp4'
             mimetype = 'video/mp4'
@@ -148,10 +146,8 @@ def download():
         
         # Check if file exists, if not try to find any file with the extension
         if not os.path.exists(filepath):
-            # Look for the most recently created file with the right extension
             files = [f for f in os.listdir(DOWNLOAD_FOLDER) if f.endswith(f'.{file_extension}')]
             if files:
-                # Get the most recent file
                 files.sort(key=lambda x: os.path.getmtime(os.path.join(DOWNLOAD_FOLDER, x)), reverse=True)
                 filepath = os.path.join(DOWNLOAD_FOLDER, files[0])
                 filename = files[0]
@@ -173,7 +169,6 @@ def download():
 
 @app.route('/download_mp3', methods=['POST'])
 def download_mp3():
-    # Redirect to new download endpoint for backward compatibility
     data = request.get_json()
     data['format'] = 'mp3'
     request._cached_json = data
@@ -192,5 +187,3 @@ def cleanup():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
-

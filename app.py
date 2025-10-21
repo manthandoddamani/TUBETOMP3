@@ -28,10 +28,15 @@ def get_video_info():
         if not url:
             return jsonify({'error': 'Please provide a YouTube URL'}), 400
         
-        ydl_opts = {
-            'quiet': True,
-            'no_warnings': True,
-        }
+     ydl_opts = {
+    'quiet': True,
+    'no_warnings': True,
+    'cookiefile': 'cookies.txt',  # use the exact name of your secret file
+    'http_headers': {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    },
+}
+
         
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)

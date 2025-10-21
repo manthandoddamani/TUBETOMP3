@@ -83,16 +83,21 @@ def download():
                 quality = '192'
             
             ydl_opts = {
-                'format': 'bestaudio/best',
-                'postprocessors': [{
-                    'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': quality,
-                }],
-                'outtmpl': output_path,
-                'quiet': True,
-                'no_warnings': True,
-            }
+    'format': 'bestaudio/best',
+    'postprocessors': [{
+        'key': 'FFmpegExtractAudio',
+        'preferredcodec': 'mp3',
+        'preferredquality': quality,
+    }],
+    'outtmpl': output_path,
+    'quiet': True,
+    'no_warnings': True,
+    'cookiefile': 'cookies.txt',
+    'http_headers': {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    },
+}
+
             
             file_extension = 'mp3'
             mimetype = 'audio/mpeg'
@@ -114,18 +119,22 @@ def download():
             else:
                 format_str = 'bestvideo+bestaudio/best'
             
-            ydl_opts = {
-                'format': format_str,
-                'postprocessors': [{
-                    'key': 'FFmpegVideoConvertor',
-                    'preferedformat': 'mp4',
-                }],
-                'outtmpl': output_path,
-                'quiet': True,
-                'no_warnings': True,
-                'merge_output_format': 'mp4',
-            }
-            
+      ydl_opts = {
+    'format': format_str,
+    'postprocessors': [{
+        'key': 'FFmpegVideoConvertor',
+        'preferedformat': 'mp4',
+    }],
+    'outtmpl': output_path,
+    'quiet': True,
+    'no_warnings': True,
+    'cookiefile': 'cookies.txt',
+    'http_headers': {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+    },
+    'merge_output_format': 'mp4',
+}
+
             file_extension = 'mp4'
             mimetype = 'video/mp4'
         else:

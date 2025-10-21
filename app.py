@@ -31,7 +31,7 @@ def get_video_info():
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
-            'cookiefile': 'cookies.txt',  # use the exact name of your secret file
+            'cookiefile': '/etc/secrets/cookies.txt',
             'http_headers': {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
             },
@@ -91,7 +91,7 @@ def download():
                 'outtmpl': output_path,
                 'quiet': True,
                 'no_warnings': True,
-                'cookiefile': 'cookies.txt',
+                'cookiefile': '/etc/secrets/cookies.txt',
                 'http_headers': {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
                 },
@@ -126,7 +126,7 @@ def download():
                 'outtmpl': output_path,
                 'quiet': True,
                 'no_warnings': True,
-                'cookiefile': 'cookies.txt',
+                'cookiefile': '/etc/secrets/cookies.txt',
                 'http_headers': {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
                 },

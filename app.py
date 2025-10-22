@@ -3,6 +3,19 @@ import yt_dlp
 import os
 import re
 from datetime import datetime
+import shutil
+
+# Copy the cookies file from /etc/secrets/ to a temp writable folder
+COOKIE_SRC = '/etc/secrets/cookies.txt'
+COOKIE_DST = '/tmp/cookies.txt'
+
+if os.path.exists(COOKIE_SRC):
+    try:
+        shutil.copy(COOKIE_SRC, COOKIE_DST)
+    except Exception as e:
+        print(f"Failed to copy cookies file: {e}")
+else:
+    print("Warning: cookies.txt not found in /etc/secrets/")
 
 app = Flask(__name__)
 
@@ -31,7 +44,7 @@ def get_video_info():
         ydl_opts = {
             'quiet': True,
             'no_warnings': True,
-            'cookiefile': '/etc/secrets/cookies.txt',
+            'cookiefile': COOKIE_DST,
             'nooverwrites': True,   # ✅ prevent write attempts
             'http_headers': {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
@@ -91,7 +104,7 @@ def download():
                 'quiet': True,
                 'no_warnings': True,
                 'nooverwrites': True,   # ✅ prevent write attempts
-                'cookiefile': '/etc/secrets/cookies.txt',
+                'cookiefile': COOKIE_DST,
                 'http_headers': {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
                 },
@@ -125,7 +138,7 @@ def download():
                 'quiet': True,
                 'no_warnings': True,
                 'nooverwrites': True,   # ✅ prevent write attempts
-                'cookiefile': '/etc/secrets/cookies.txt',
+                'cookiefile': COOKIE_DST,
                 'http_headers': {
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
                 },
